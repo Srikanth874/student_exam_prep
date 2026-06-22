@@ -35,21 +35,22 @@ import { cookies } from "next/headers";
 
 export async function createRouteHandlerSupabaseClient() {
   const cookieStore = await cookies();
+
   return createServerClient(supabaseUrl, supabaseAnonKey, {
     cookies: {
       getAll() {
         return cookieStore.getAll();
       },
-      setAll(cookiesToSet) {
+
+      setAll(cookiesToSet: CookieToSet[]) {
         try {
           cookiesToSet.forEach(({ name, value, options }) =>
             cookieStore.set(name, value, options)
           );
         } catch {
-          // ignore set cookie errors on serverside
+          // ignore set cookie errors
         }
       }
     }
   });
 }
-
