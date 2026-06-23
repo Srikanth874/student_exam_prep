@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { ArrowRight, BrainCircuit, CheckCircle2, FileStack, LockKeyhole, Sparkles } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import { Tilt } from "@/components/Tilt";
 
 const features = [
   "Supabase email authentication",
@@ -10,7 +11,6 @@ const features = [
   "Storage-ready upload workflow",
   "Gemini-backed paper generation"
 ];
-
 const consoleItems: Array<{
   title: string;
   detail: string;
@@ -80,8 +80,22 @@ export default function LandingPage() {
 
         <div className="relative animate-[riseIn_0.8s_ease-out_0.12s_both]" style={{ perspective: 1400 }}>
           <div className="absolute -inset-6 rounded-[2.5rem] bg-gradient-to-br from-aurora/15 via-violet/10 to-solar/10 blur-3xl opacity-80" />
-          <div className="relative interactive-panel mesh-surface animate-float rounded-[2rem] border border-white/12 p-5 shadow-depth">
-            <div className="rounded-[1.5rem] border border-white/10 bg-slate-950/55 p-5 backdrop-blur-xl">
+
+          {/* Stacked glass sheets behind the console, suggesting real thickness */}
+          <span
+            aria-hidden="true"
+            className="ghost-layer rounded-[2rem] translate-x-5 translate-y-7 rotate-[-2.5deg]"
+          />
+          <span
+            aria-hidden="true"
+            className="ghost-layer rounded-[2rem] translate-x-2.5 translate-y-3.5 rotate-[-1deg]"
+          />
+
+          <Tilt
+            max={7}
+            className="interactive-panel mesh-surface animate-float relative rounded-[2rem] border border-white/12 p-5 shadow-depth"
+          >
+            <div className="rounded-[1.5rem] border border-white/10 bg-slate-950/55 p-5 backdrop-blur-xl [transform-style:preserve-3d]">
               <div className="mb-6 flex items-center justify-between">
                 <div>
                   <p className="text-sm text-slate-400">Generation Console</p>
@@ -92,7 +106,10 @@ export default function LandingPage() {
 
               <div className="grid gap-4">
                 {consoleItems.map(({ title, detail, Icon }) => (
-                  <div key={title} className="rounded-xl border border-white/10 bg-white/[0.055] p-4">
+                  <div
+                    key={title}
+                    className="depth-item rounded-xl border border-white/10 bg-white/[0.055] p-4"
+                  >
                     <div className="flex items-center gap-3">
                       <span className="flex h-11 w-11 items-center justify-center rounded-lg bg-white/10 text-aurora">
                         <Icon className="h-5 w-5" />
@@ -118,7 +135,7 @@ export default function LandingPage() {
                 </div>
               </div>
             </div>
-          </div>
+          </Tilt>
         </div>
       </section>
     </main>

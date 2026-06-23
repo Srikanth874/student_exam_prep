@@ -1,8 +1,9 @@
 import type { GenerationRequest } from "@/types";
 
 export interface N8nGenerationResponse {
-  status: "queued" | "skipped";
+  status: "queued" | "skipped" | "success" | "error";
   message: string;
+  result?: string;
 }
 
 export async function sendGenerationRequestToN8n(
@@ -17,8 +18,9 @@ export async function sendGenerationRequestToN8n(
     };
   }
 
-  // Default behavior: send JSON payload containing signed URLs (recommended).
-  // n8n will receive `fileUrls` and can download the files itself.
+  console.log("Sending to n8n webhook:", webhookUrl);
+  console.log("Payload being sent:", JSON.stringify(payload, null, 2));
+  
   const response = await fetch(webhookUrl, {
     method: "POST",
     headers: {
@@ -28,14 +30,20 @@ export async function sendGenerationRequestToN8n(
     body: JSON.stringify(payload)
   });
 
+  console.log("n8n response status:", response.status);
+
   if (!response.ok) {
     const payloadText = await response.text();
     throw new Error(`n8n workflow request failed: ${response.status} ${response.statusText}. ${payloadText}`);
   }
 
+  const data = await response.json();
+  console.log("n8n response data:", data);
+
   return {
-    status: "queued",
-    message: "Generation workflow queued successfully."
+    status: "success",
+    message: "Generation completed.",
+    result: data.content?.parts?.[0]?.text ?? data.result ?? data.message ?? ""
   };
 }
 

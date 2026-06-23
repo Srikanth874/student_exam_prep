@@ -117,14 +117,17 @@ export async function POST(request: Request) {
       };
     }
 
-    if (n8nResult.status === "queued") {
-      return NextResponse.json(n8nResult, { status: 200 });
-    }
+    if (n8nResult.status === "success") {
+  return NextResponse.json({ result: n8nResult.result, message: n8nResult.message }, { status: 200 });
+}
 
-    const result = await generateWithGemini(payloadWithUrls);
-    const message = n8nResult.status === "skipped" ? `${n8nResult.message} ${result.message}` : result.message;
+if (n8nResult.status === "skipped") {
+  const result = await generateWithGemini(payloadWithUrls);
+  const message = `${n8nResult.message} ${result.message}`;
+  return NextResponse.json({ ...result, message }, { status: result.status === "error" ? 500 : 200 });
+}
 
-    return NextResponse.json({ ...result, message }, { status: result.status === "error" ? 500 : 200 });
+return NextResponse.json({ message: "Generation failed." }, { status: 500 });
   } catch (err) {
     // Log error server-side for debugging using the already-read body
     console.error("/api/generate error:", err instanceof Error ? err.stack ?? err.message : err);
